@@ -97,13 +97,14 @@ export default function(program: ts.Program): ts.TransformerFactory<ts.SourceFil
           ts.factory.createCallExpression(
             ts.factory.createPropertyAccessExpression(
               ts.factory.createIdentifier("Reflect"),
-              "metadata",
+              "defineMetadata",
             ),
+            //  [ts.factory.createIdentifier(classNode.name!.getText()), ts.factory.createStringLiteral(key), metadataValue, ts.factory.createStringLiteral(member.name.getText())],
             undefined,
-            [ts.factory.createStringLiteral("design:paramtypes"), ts.factory.createArrayLiteralExpression(
+            [ts.factory.createIdentifier(classDec.name!.getText()),  ts.factory.createStringLiteral("design:paramtypes"), ts.factory.createArrayLiteralExpression(
               paramTypes,
               false
-            )],
+            ), ts.factory.createStringLiteral(method.name.getText())],
           ),
         ))
 

@@ -46,7 +46,7 @@ function default_1(program) {
             }
             return typescript_1.default.factory.createExpressionStatement(typescript_1.default.factory.createCallExpression(typescript_1.default.factory.createPropertyAccessExpression(typescript_1.default.factory.createIdentifier("Reflect"), "defineMetadata"), undefined, [typescript_1.default.factory.createIdentifier(classNode.name.getText()), typescript_1.default.factory.createStringLiteral(key), metadataValue, typescript_1.default.factory.createStringLiteral(member.name.getText())]));
         };
-        var processMethod = function (method) {
+        var processMethod = function (classDec, method) {
             var e_1, _a;
             var metadataExpressions = [];
             var paramTypes = [];
@@ -82,7 +82,7 @@ function default_1(program) {
             // design:type
             {
                 var type = typeChecker.getTypeAtLocation(method);
-                var typeMetadataCall = createMetadataCall("design:type", type);
+                var typeMetadataCall = createMetadataCall("design:type", method, classDec, type);
                 metadataExpressions.push(typeMetadataCall);
             }
             // design:returntype
@@ -90,7 +90,7 @@ function default_1(program) {
                 var signatures = typeChecker.getSignaturesOfType(typeChecker.getTypeAtLocation(method), typescript_1.default.SignatureKind.Call);
                 signatures.forEach(function (signature) {
                     var returnType = signature.getReturnType();
-                    var typeMetadataCall = createMetadataCall("design:returntype", returnType);
+                    var typeMetadataCall = createMetadataCall("design:returntype", method, classDec, returnType);
                     metadataExpressions.push(typeMetadataCall);
                 });
             }
@@ -119,7 +119,7 @@ function default_1(program) {
             if (typescript_1.default.isClassDeclaration(node) && node.modifiers) {
                 var newMembers = node.members.map(function (member) {
                     if (typescript_1.default.isMethodDeclaration(member)) {
-                        return processMethod(member);
+                        return processMethod(node, member);
                     }
                     return member;
                 });
