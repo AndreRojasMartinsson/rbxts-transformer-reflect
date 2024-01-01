@@ -1,0 +1,36 @@
+{
+	"name": "rbxts-transformer-reflect",
+	"version": "2.6.1",
+	"description": "",
+	"main": "out/index.js",
+	"scripts": {
+		"build": "tsc",
+		"watch": "tsc -w",
+		"prepare": "tsc"
+	},
+	"author": "RootEntry",
+	"license": "ISC",
+	"publishConfig": {
+		"access": "public"
+	},
+	"devDependencies": {
+		"@rbxts/types": "^1.0.738",
+		"@types/node": "^20.10.6",
+		"@typescript-eslint/eslint-plugin": "^6.16.0",
+		"@typescript-eslint/parser": "^6.16.0",
+		"eslint": "^8.56.0",
+		"eslint-config-prettier": "^9.1.0",
+		"eslint-plugin-roblox-ts": "^0.0.36",
+		"prettier": "^3.1.1",
+		"roblox-ts": "2.2.0-dev-5922946"
+	},
+	"dependencies": {
+		"@types/ts-expose-internals": "npm:ts-expose-internals@^5.2.2",
+		"chalk": "^4.1.2",
+		"typescript": "=5.2.2"
+	},
+	"files": [
+		"out",
+		"index.d.ts"
+	]
+}
