@@ -8,8 +8,10 @@ export default function(program: ts.Program): ts.TransformerFactory<ts.SourceFil
     Logger.write("\n");
 
     Logger.writeLine(`Transforming file '${file.fileName}' ...`)
-      const createMetadataCall = (
-        key: string,
+    const createMetadataCall = (
+      key: string,
+      member: ts.MethodDeclaration,
+        classNode: ts.ClassDeclaration,
         type: ts.Type,
       ): ts.ExpressionStatement => {
         let metadataValue: ts.Expression;
@@ -44,7 +46,7 @@ export default function(program: ts.Program): ts.TransformerFactory<ts.SourceFil
               "defineMetadata",
             ),
             undefined,
-            [ts.factory.createStringLiteral(key), metadataValue],
+            [ts.factory.createIdentifier(classNode.name!.getText()), ts.factory.createStringLiteral(key), metadataValue, ts.factory.createStringLiteral(member.name.getText())],
           ),
         );
       };

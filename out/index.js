@@ -24,24 +24,24 @@ function default_1(program) {
         var createMetadataCall = function (key, type) {
             var metadataValue;
             if (type.getCallSignatures().length > 0) {
-                metadataValue = typescript_1.default.factory.createIdentifier("Function");
+                metadataValue = typescript_1.default.factory.createStringLiteral("Function");
             }
             else {
                 switch (typeChecker.typeToString(type)) {
                     case "string":
-                        metadataValue = typescript_1.default.factory.createIdentifier("String");
+                        metadataValue = typescript_1.default.factory.createStringLiteral("String");
                         break;
                     case "number":
-                        metadataValue = typescript_1.default.factory.createIdentifier("Number");
+                        metadataValue = typescript_1.default.factory.createStringLiteral("Number");
                         break;
                     case "boolean":
-                        metadataValue = typescript_1.default.factory.createIdentifier("Boolean");
+                        metadataValue = typescript_1.default.factory.createStringLiteral("Boolean");
                         break;
                     case "object":
-                        metadataValue = typescript_1.default.factory.createIdentifier("YOOY");
+                        metadataValue = typescript_1.default.factory.createStringLiteral("YOOY");
                         break;
                     default:
-                        metadataValue = typescript_1.default.factory.createIdentifier(typeChecker.typeToString(type));
+                        metadataValue = typescript_1.default.factory.createStringLiteral(typeChecker.typeToString(type));
                 }
             }
             return typescript_1.default.factory.createExpressionStatement(typescript_1.default.factory.createCallExpression(typescript_1.default.factory.createPropertyAccessExpression(typescript_1.default.factory.createIdentifier("Reflect"), "defineMetadata"), undefined, [typescript_1.default.factory.createStringLiteral(key), metadataValue]));
@@ -56,24 +56,24 @@ function default_1(program) {
                 // const metadataCall = createMetadataCall("design:paramtypes", type);
                 var metadataValue;
                 if (type.getCallSignatures().length > 0) {
-                    metadataValue = typescript_1.default.factory.createIdentifier("Function");
+                    metadataValue = typescript_1.default.factory.createStringLiteral("Function");
                 }
                 else {
                     switch (typeChecker.typeToString(type)) {
                         case "string":
-                            metadataValue = typescript_1.default.factory.createIdentifier("String");
+                            metadataValue = typescript_1.default.factory.createStringLiteral("String");
                             break;
                         case "number":
-                            metadataValue = typescript_1.default.factory.createIdentifier("Number");
+                            metadataValue = typescript_1.default.factory.createStringLiteral("Number");
                             break;
                         case "boolean":
-                            metadataValue = typescript_1.default.factory.createIdentifier("Boolean");
+                            metadataValue = typescript_1.default.factory.createStringLiteral("Boolean");
                             break;
                         case "object":
-                            metadataValue = typescript_1.default.factory.createIdentifier("YOOY");
+                            metadataValue = typescript_1.default.factory.createStringLiteral("YOOY");
                             break;
                         default:
-                            metadataValue = typescript_1.default.factory.createIdentifier(typeChecker.typeToString(type));
+                            metadataValue = typescript_1.default.factory.createStringLiteral(typeChecker.typeToString(type));
                     }
                 }
                 paramTypes.push(metadataValue);
