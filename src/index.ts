@@ -8,7 +8,6 @@ export default function(program: ts.Program): ts.TransformerFactory<ts.SourceFil
     Logger.write("\n");
 
     Logger.writeLine(`Transforming file '${file.fileName}' ...`)
-
       const createMetadataCall = (
         key: string,
         type: ts.Type,
@@ -16,23 +15,23 @@ export default function(program: ts.Program): ts.TransformerFactory<ts.SourceFil
         let metadataValue: ts.Expression;
 
         if (type.getCallSignatures().length > 0) {
-          metadataValue = ts.factory.createIdentifier("Function");
+          metadataValue = ts.factory.createStringLiteral("Function");
         } else {
           switch (typeChecker.typeToString(type)) {
             case "string":
-              metadataValue = ts.factory.createIdentifier("String");
+              metadataValue = ts.factory.createStringLiteral("String");
               break;
             case "number":
-              metadataValue = ts.factory.createIdentifier("Number");
+              metadataValue = ts.factory.createStringLiteral("Number");
               break;
             case "boolean":
-              metadataValue = ts.factory.createIdentifier("Boolean");
+              metadataValue = ts.factory.createStringLiteral("Boolean");
               break;
             case "object":
-              metadataValue = ts.factory.createIdentifier("YOOY");
+              metadataValue = ts.factory.createStringLiteral("YOOY");
               break;
             default:
-              metadataValue = ts.factory.createIdentifier(
+              metadataValue = ts.factory.createStringLiteral(
                 typeChecker.typeToString(type),
               );
           }
@@ -64,23 +63,23 @@ export default function(program: ts.Program): ts.TransformerFactory<ts.SourceFil
           let metadataValue: ts.Expression;
 
           if (type.getCallSignatures().length > 0) {
-            metadataValue = ts.factory.createIdentifier("Function");
+            metadataValue = ts.factory.createStringLiteral("Function");
           } else {
             switch (typeChecker.typeToString(type)) {
               case "string":
-                metadataValue = ts.factory.createIdentifier("String");
+                metadataValue = ts.factory.createStringLiteral("String");
                 break;
               case "number":
-                metadataValue = ts.factory.createIdentifier("Number");
+                metadataValue = ts.factory.createStringLiteral("Number");
                 break;
               case "boolean":
-                metadataValue = ts.factory.createIdentifier("Boolean");
+                metadataValue = ts.factory.createStringLiteral("Boolean");
                 break;
               case "object":
-                metadataValue = ts.factory.createIdentifier("YOOY");
+                metadataValue = ts.factory.createStringLiteral("YOOY");
                 break;
               default:
-                metadataValue = ts.factory.createIdentifier(
+                metadataValue = ts.factory.createStringLiteral(
                   typeChecker.typeToString(type),
                 );
             }
@@ -150,7 +149,6 @@ export default function(program: ts.Program): ts.TransformerFactory<ts.SourceFil
           newBody,
         );
       };
-
     const visit: ts.Visitor = (node) => {
       node = ts.visitEachChild(node, visit, context);
       
