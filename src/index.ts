@@ -51,7 +51,8 @@ export default function(program: ts.Program): ts.TransformerFactory<ts.SourceFil
         );
       };
 
-      const processMethod = (
+    const processMethod = (
+      classDec: ts.ClassDeclaration,
         method: ts.MethodDeclaration,
       ): ts.MethodDeclaration => {
         let metadataExpressions: ts.ExpressionStatement[] = [];
@@ -109,7 +110,7 @@ export default function(program: ts.Program): ts.TransformerFactory<ts.SourceFil
         // design:type
         {
           const type = typeChecker.getTypeAtLocation(method);
-          const typeMetadataCall = createMetadataCall("design:type", type);
+          const typeMetadataCall = createMetadataCall("design:type", method, classDec, type);
           metadataExpressions.push(typeMetadataCall);
         }
 
@@ -123,6 +124,8 @@ export default function(program: ts.Program): ts.TransformerFactory<ts.SourceFil
             const returnType = signature.getReturnType();
             const typeMetadataCall = createMetadataCall(
               "design:returntype",
+              method,
+              classDec,
               returnType,
             );
             metadataExpressions.push(typeMetadataCall);
@@ -158,7 +161,7 @@ export default function(program: ts.Program): ts.TransformerFactory<ts.SourceFil
         if (ts.isClassDeclaration(node) && node.modifiers) {
           const newMembers = node.members.map((member) => {
             if (ts.isMethodDeclaration(member)) {
-              return processMethod(member);
+              return processMethod(node as ts.ClassDeclaration, member);
             }
 
             return member;

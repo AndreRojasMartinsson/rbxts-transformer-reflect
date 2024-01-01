@@ -21,7 +21,7 @@ function default_1(program) {
     return function (context) { return function (file) {
         logger_1.Logger.write("\n");
         logger_1.Logger.writeLine("Transforming file '".concat(file.fileName, "' ..."));
-        var createMetadataCall = function (key, type) {
+        var createMetadataCall = function (key, member, classNode, type) {
             var metadataValue;
             if (type.getCallSignatures().length > 0) {
                 metadataValue = typescript_1.default.factory.createStringLiteral("Function");
@@ -44,7 +44,7 @@ function default_1(program) {
                         metadataValue = typescript_1.default.factory.createStringLiteral(typeChecker.typeToString(type));
                 }
             }
-            return typescript_1.default.factory.createExpressionStatement(typescript_1.default.factory.createCallExpression(typescript_1.default.factory.createPropertyAccessExpression(typescript_1.default.factory.createIdentifier("Reflect"), "defineMetadata"), undefined, [typescript_1.default.factory.createStringLiteral(key), metadataValue]));
+            return typescript_1.default.factory.createExpressionStatement(typescript_1.default.factory.createCallExpression(typescript_1.default.factory.createPropertyAccessExpression(typescript_1.default.factory.createIdentifier("Reflect"), "defineMetadata"), undefined, [typescript_1.default.factory.createIdentifier(classNode.name.getText()), typescript_1.default.factory.createStringLiteral(key), metadataValue, typescript_1.default.factory.createStringLiteral(member.name.getText())]));
         };
         var processMethod = function (method) {
             var e_1, _a;
