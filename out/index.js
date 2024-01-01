@@ -78,7 +78,9 @@ function default_1(program) {
                 }
                 paramTypes.push(metadataValue);
             });
-            metadataExpressions.push(typescript_1.default.factory.createExpressionStatement(typescript_1.default.factory.createCallExpression(typescript_1.default.factory.createPropertyAccessExpression(typescript_1.default.factory.createIdentifier("Reflect"), "metadata"), undefined, [typescript_1.default.factory.createStringLiteral("design:paramtypes"), typescript_1.default.factory.createArrayLiteralExpression(paramTypes, false)])));
+            metadataExpressions.push(typescript_1.default.factory.createExpressionStatement(typescript_1.default.factory.createCallExpression(typescript_1.default.factory.createPropertyAccessExpression(typescript_1.default.factory.createIdentifier("Reflect"), "defineMetadata"), 
+            //  [ts.factory.createIdentifier(classNode.name!.getText()), ts.factory.createStringLiteral(key), metadataValue, ts.factory.createStringLiteral(member.name.getText())],
+            undefined, [typescript_1.default.factory.createIdentifier(classDec.name.getText()), typescript_1.default.factory.createStringLiteral("design:paramtypes"), typescript_1.default.factory.createArrayLiteralExpression(paramTypes, false), typescript_1.default.factory.createStringLiteral(method.name.getText())])));
             // design:type
             {
                 var type = typeChecker.getTypeAtLocation(method);
