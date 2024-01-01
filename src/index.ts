@@ -9,140 +9,172 @@ export default function(program: ts.Program): ts.TransformerFactory<ts.SourceFil
 
     Logger.writeLine(`Transforming file '${file.fileName}' ...`)
 
-     const decoratorExpressions: any[] = [];
-
-    const createMetadataCall = (key: string, type: ts.Type) => {
-        Logger.writeLine("Constructing a metadata call.")
+      const createMetadataCall = (
+        key: string,
+        type: ts.Type,
+      ): ts.ExpressionStatement => {
         let metadataValue: ts.Expression;
 
         if (type.getCallSignatures().length > 0) {
-          metadataValue = factory.createIdentifier("Function");
+          metadataValue = ts.factory.createIdentifier("Function");
         } else {
           switch (typeChecker.typeToString(type)) {
             case "string":
-              metadataValue = factory.createIdentifier("String");
+              metadataValue = ts.factory.createIdentifier("String");
               break;
             case "number":
-              metadataValue = factory.createIdentifier("Number");
+              metadataValue = ts.factory.createIdentifier("Number");
               break;
             case "boolean":
-              metadataValue = factory.createIdentifier("Boolean");
+              metadataValue = ts.factory.createIdentifier("Boolean");
               break;
             case "object":
-              metadataValue = factory.createIdentifier("YOOY");
+              metadataValue = ts.factory.createIdentifier("YOOY");
               break;
             default:
-              metadataValue = factory.createIdentifier(
+              metadataValue = ts.factory.createIdentifier(
                 typeChecker.typeToString(type),
               );
           }
         }
 
-        return factory.createCallExpression(
-          factory.createIdentifier("__metadata"),
-          undefined,
-          [factory.createStringLiteral(key), metadataValue],
+        return ts.factory.createExpressionStatement(
+          ts.factory.createCallExpression(
+            ts.factory.createPropertyAccessExpression(
+              ts.factory.createIdentifier("Reflect"),
+              "defineMetadata",
+            ),
+            undefined,
+            [ts.factory.createStringLiteral(key), metadataValue],
+          ),
         );
       };
 
-    const processDecorators = (modifiers: ts.NodeArray<ts.ModifierLike>) => {
-      if (modifiers) {
-        modifiers.forEach((modifier) => {
-          if (ts.isDecorator(modifier)) {
-              Logger.writeLine(`Processing decorator "${modifier.id}"`)
-              decoratorExpressions.push(modifier.expression);
+      const processMethod = (
+        method: ts.MethodDeclaration,
+      ): ts.MethodDeclaration => {
+        let metadataExpressions: ts.ExpressionStatement[] = [];
 
-              const parent = modifier.parent;
-            if (ts.isMethodDeclaration(parent)) {
-                
-              Logger.writeLine(`Printing metadata decorator factories for "${modifier.id}" at "${parent.name.getText()}"`)
+        let paramTypes: ts.Expression[] = [];
+        // design:paramtypes
+        method.parameters.map((param) => {
+          const type = typeChecker.getTypeAtLocation(param);
+          // const metadataCall = createMetadataCall("design:paramtypes", type);
 
-                const type = typeChecker.getTypeAtLocation(parent);
-                decoratorExpressions.push(
-                  createMetadataCall("design:type", type),
+          let metadataValue: ts.Expression;
+
+          if (type.getCallSignatures().length > 0) {
+            metadataValue = ts.factory.createIdentifier("Function");
+          } else {
+            switch (typeChecker.typeToString(type)) {
+              case "string":
+                metadataValue = ts.factory.createIdentifier("String");
+                break;
+              case "number":
+                metadataValue = ts.factory.createIdentifier("Number");
+                break;
+              case "boolean":
+                metadataValue = ts.factory.createIdentifier("Boolean");
+                break;
+              case "object":
+                metadataValue = ts.factory.createIdentifier("YOOY");
+                break;
+              default:
+                metadataValue = ts.factory.createIdentifier(
+                  typeChecker.typeToString(type),
                 );
-
-                // design:returntype
-                const signatures = typeChecker.getSignaturesOfType(
-                  typeChecker.getTypeAtLocation(parent),
-                  ts.SignatureKind.Call,
-                );
-
-                signatures.forEach((signature) => {
-                  const returnType = signature.getReturnType();
-                  const typeMetadataCall = createMetadataCall(
-                    "design:returntype",
-                    returnType,
-                  );
-                  decoratorExpressions.push(typeMetadataCall);
-                });
-
-                let paramTypes: ts.Expression[] = [];
-                // design:paramtypes
-                parent.parameters.map((param) => {
-                  const type = typeChecker.getTypeAtLocation(param);
-                  // const metadataCall = createMetadataCall("design:paramtypes", type);
-
-                  let metadataValue: ts.Expression;
-
-                  if (type.getCallSignatures().length > 0) {
-                    metadataValue = factory.createIdentifier("Function");
-                  } else {
-                    switch (typeChecker.typeToString(type)) {
-                      case "string":
-                        metadataValue = factory.createIdentifier("String");
-                        break;
-                      case "number":
-                        metadataValue = factory.createIdentifier("Number");
-                        break;
-                      case "boolean":
-                        metadataValue = factory.createIdentifier("Boolean");
-                        break;
-                      case "object":
-                        metadataValue = factory.createIdentifier("YOOY");
-                        break;
-                      default:
-                        metadataValue = factory.createIdentifier(
-                          typeChecker.typeToString(type),
-                        );
-                    }
-                  }
-
-                  paramTypes.push(metadataValue);
-                });
-
-                decoratorExpressions.push(
-                  factory.createCallExpression(
-                    factory.createIdentifier("__metadata"),
-                    undefined,
-                    [
-                      factory.createStringLiteral("design:paramtypes"),
-                      factory.createArrayLiteralExpression(
-                        paramTypes,
-                        false,
-                      ),
-                    ],
-                  ),
-                );
-              }
             }
+          }
+
+          paramTypes.push(metadataValue)
+        });
+
+ 
+
+        metadataExpressions.push(ts.factory.createExpressionStatement(
+          ts.factory.createCallExpression(
+            ts.factory.createPropertyAccessExpression(
+              ts.factory.createIdentifier("Reflect"),
+              "metadata",
+            ),
+            undefined,
+            [ts.factory.createStringLiteral("design:paramtypes"), ts.factory.createArrayLiteralExpression(
+              paramTypes,
+              false
+            )],
+          ),
+        ))
+
+        // design:type
+        {
+          const type = typeChecker.getTypeAtLocation(method);
+          const typeMetadataCall = createMetadataCall("design:type", type);
+          metadataExpressions.push(typeMetadataCall);
+        }
+
+        // design:returntype
+        {
+          const signatures = typeChecker.getSignaturesOfType(
+            typeChecker.getTypeAtLocation(method),
+            ts.SignatureKind.Call,
+          );
+          signatures.forEach((signature) => {
+            const returnType = signature.getReturnType();
+            const typeMetadataCall = createMetadataCall(
+              "design:returntype",
+              returnType,
+            );
+            metadataExpressions.push(typeMetadataCall);
           });
         }
-      };
 
-		const visit: ts.Visitor = (node) => {
-       if (
-          ts.isClassDeclaration(node) ||
-          ts.isMethodDeclaration(node) ||
-          ts.isPropertyDeclaration(node) ||
-          ts.isParameter(node)
-        ) {
-          if (node.modifiers) {
-            processDecorators(node.modifiers);
+        let newBody = method.body;
+        if (newBody) {
+          let newArray: any[] = metadataExpressions;
+          for (const element of newBody.statements) {
+            newArray.push(element);
           }
+
+          newBody = ts.factory.updateBlock(newBody, newArray);
         }
 
-        return ts.visitEachChild(node, visit, context);
+        return ts.factory.updateMethodDeclaration(
+          method,
+          method.modifiers,
+          method.asteriskToken,
+          method.name,
+          method.questionToken,
+          method.typeParameters,
+          method.parameters,
+          method.type,
+          newBody,
+        );
+      };
+
+    const visit: ts.Visitor = (node) => {
+      node = ts.visitEachChild(node, visit, context);
+      
+
+        if (ts.isClassDeclaration(node) && node.modifiers) {
+          const newMembers = node.members.map((member) => {
+            if (ts.isMethodDeclaration(member)) {
+              return processMethod(member);
+            }
+
+            return member;
+          });
+
+          return ts.factory.updateClassDeclaration(
+            node,
+            node.modifiers,
+            node.name,
+            node.typeParameters,
+            node.heritageClauses,
+            newMembers,
+          );
+        }
+
+        return node
 		};
 
 		const transformedFile = ts.visitNode(file, visit);
