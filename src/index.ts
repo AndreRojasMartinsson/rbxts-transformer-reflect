@@ -140,7 +140,17 @@ export default function (program: ts.Program): ts.TransformerFactory<ts.SourceFi
 				);
 			});
 
-			const newStatements = file.statements.concat(...stmts);
+        const lastImportIndex = file.statements.findIndex(
+          stmt => ts.isImportDeclaration(stmt)
+        );
+        const insertionIndex = lastImportIndex >= 0 ? lastImportIndex + 1 : 0;
+
+
+        const newStatements = [
+          ...file.statements.slice(0, insertionIndex),
+          ...stmts,
+          ...file.statements.slice(insertionIndex)
+        ];
 			return ts.factory.updateSourceFile(file, newStatements);
 		}
 
